@@ -120,9 +120,12 @@ dl.facts dd{margin:0;font-weight:600}
 .gl-head{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px}
 .gl-head strong{margin:0;flex:1}
 .gl-fold{flex:none;background:none;border:1px solid #3A4766;border-radius:5px;color:#C9D2E3;font:inherit;font-size:.72rem;padding:3px 7px;cursor:pointer;min-height:28px}
-.grid-legend .gl-short{display:none}
-.grid-legend.folded .gl-short{display:block}
-.grid-legend.folded #legendMore{display:none}
+/* 범례 전체 접기: 접으면 작은 버튼 하나만 남음(조원 피드백). ‘설치 개수 기준’은 버튼에도 표시 */
+.gl-open{display:none;background:none;border:none;color:#FFE38A;font:inherit;font-weight:700;font-size:.8rem;cursor:pointer;padding:2px 2px;min-height:32px}
+.gl-open small{font-weight:400;color:#AAB4C8;margin:0 2px}
+.grid-legend.folded{padding:4px 10px}
+.grid-legend.folded > :not(.gl-open){display:none}
+.grid-legend.folded .gl-open{display:block}
 .grid-legend .cellsize{font-weight:400;color:var(--sub)}
 .grid-legend .steps{display:flex;gap:8px;flex-wrap:wrap}
 .grid-legend .steps span{display:inline-flex;align-items:center;gap:4px}

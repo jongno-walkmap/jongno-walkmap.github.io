@@ -462,16 +462,16 @@ function toggleLights() {
 }
 map.on("zoomend", syncLightPoints);
 
-// 가로등 범례 설명 접기/펼치기(조원 피드백). ‘설치 개수이며 조도 아님’ 한 줄은 접어도 항상 보임. 기기에 기억
+// 가로등 범례 전체 접기/펼치기(조원 피드백). 접으면 ‘가로등 범례 · 설치 개수 기준’ 버튼만 남음. 기기에 기억
 const LEGEND_KEY = "walkmap.lightLegendFolded";
 const gridLegendEl = document.getElementById("gridLegend"), legendFold = document.getElementById("legendFold");
 function setLegendFold(folded, remember = true) {
   gridLegendEl.classList.toggle("folded", folded);
-  legendFold.textContent = folded ? "설명 ▾" : "접기 ▴";
   legendFold.setAttribute("aria-expanded", !folded);
   if (remember) try { localStorage.setItem(LEGEND_KEY, folded ? "1" : ""); } catch {}
 }
-legendFold.onclick = () => setLegendFold(!gridLegendEl.classList.contains("folded"));
+legendFold.onclick = () => setLegendFold(true);
+document.getElementById("legendOpen").onclick = () => setLegendFold(false);
 try { if (localStorage.getItem(LEGEND_KEY) === "1") setLegendFold(true, false); } catch {}
 
 // 지금 가로등 격자에 들어 있는 자료의 범위(‘0개’가 등이 없다는 뜻으로 읽히지 않게 정보창에 함께 안내)
