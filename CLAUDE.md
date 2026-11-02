@@ -8,6 +8,7 @@ Claude Code가 이 프로젝트를 이어서 작업할 때 먼저 읽는 파일�
 
 * 설명은 **한국어**로, 코딩 초보도 따라올 수 있게 해 주세요. 사용자는 Windows PC와 아이패드를 씁니다.
 * 이 저장소는 **GitHub Pages로 공개 중**입니다. 푸시하면 1\~2분 뒤 공개 사이트에 반영됩니다.
+  * 공개 주소: **https://jongno-walkmap.github.io/** (2026-11-03 깃허브 조직 `jongno-walkmap`으로 옮기고 저장소 이름을 `jongno-walkmap.github.io`로 바꿈. 예전 주소 hy15712.github.io/omni 는 끊김). Pages 소스: `claude/negative-items-trash-fix-drui9r` 브랜치 / (root). 브이월드 서비스 URL도 새 주소로 등록함. 주소가 바뀌면 조사 모드 기기 기록(IndexedDB)·설정(localStorage)은 새 주소에서 안 보임 → 옮기기 전 내보내기 공지 필수
 
   * 큰 수정은 먼저 로컬에서 확인할 수 있게 하고, 사용자가 괜찮다고 하면 커밋·푸시하세요.
   * 로컬 확인은 `index.html` 더블클릭으로 충분합니다(데이터가 `.js` 파일이라 file:// 에서도 동작). 위치(GPS) 기능처럼 https가 필요한 기능은 공개 사이트나 로컬 서버에서 확인하세요.
