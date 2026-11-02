@@ -4,6 +4,8 @@
 .sv-bar .tag{font-weight:800;color:#7A5200;background:#FFE38A;padding:2px 8px;border-radius:4px}
 .sv-bar input[type=date]{font:inherit;padding:5px 6px;border:1.5px solid var(--line);border-radius:6px;background:#fff;min-height:36px}
 .sv-bar .warn{color:#9A3B2E;font-weight:700}
+.sv-hide{display:inline-flex;align-items:center;gap:4px;font-weight:600;cursor:pointer}
+.sv-hide input{width:18px;height:18px;accent-color:#7A5200}
 .sv-bar .sv-private{color:var(--sub);font-size:.78rem;margin-left:auto}
 .sv-link{background:none;border:none;color:var(--agency);text-decoration:underline;font:inherit;cursor:pointer;padding:4px}
 

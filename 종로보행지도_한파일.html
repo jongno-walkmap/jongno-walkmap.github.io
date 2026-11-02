@@ -201,6 +201,8 @@ body.night .chip.light{background:#141B2D;color:#FFE38A;border-color:#141B2D}
 .sv-bar .tag{font-weight:800;color:#7A5200;background:#FFE38A;padding:2px 8px;border-radius:4px}
 .sv-bar input[type=date]{font:inherit;padding:5px 6px;border:1.5px solid var(--line);border-radius:6px;background:#fff;min-height:36px}
 .sv-bar .warn{color:#9A3B2E;font-weight:700}
+.sv-hide{display:inline-flex;align-items:center;gap:4px;font-weight:600;cursor:pointer}
+.sv-hide input{width:18px;height:18px;accent-color:#7A5200}
 .sv-bar .sv-private{color:var(--sub);font-size:.78rem;margin-left:auto}
 .sv-link{background:none;border:none;color:var(--agency);text-decoration:underline;font:inherit;cursor:pointer;padding:4px}
 
@@ -2275,8 +2277,26 @@ header.insertAdjacentHTML("afterbegin", `
     <span>조사자 <b id="svName"></b> <button type="button" id="svNameBtn" class="sv-link">변경</button></span>
     <label class="sv-date">조사일 <input type="date" id="svDate"></label>
     <span id="svDateWarn" class="warn" hidden>오늘이 아닌 날짜로 기록 중</span>
+    <label class="sv-hide"><input type="checkbox" id="svHidePins"> 올라간 핀 숨기기</label>
+    <label class="sv-hide"><input type="checkbox" id="svHideRoads"> 올라간 구간 숨기기</label>
     <span class="sv-private">이 기록은 공개 지도에 바로 나오지 않습니다</span>
   </div>${inappHtml()}`);
+// 이미 지도에 올라간(합친) 핀·보행 구간 숨기기 — 도로를 찍을 때 기존 핀·구간이 자꾸 눌리는 불편 때문(사용자 요청).
+// 내 기기의 조사 기록 핀은 그대로 보임. 선택은 기기에 기억
+(function () {
+  const KEY = "walkmap.survey.hide";
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch {}
+  const pins = $("#svHidePins"), roads = $("#svHideRoads");
+  const apply = () => {
+    pins.checked ? markerLayer.remove() : markerLayer.addTo(map);
+    const roadOn = !roads.checked && document.getElementById("showRoads").checked;
+    roadOn ? roadLayer.addTo(map) : roadLayer.remove();
+    try { localStorage.setItem(KEY, JSON.stringify({ pins: pins.checked, roads: roads.checked })); } catch {}
+  };
+  pins.checked = !!saved.pins; roads.checked = !!saved.roads;
+  pins.onchange = roads.onchange = apply;
+  apply();
+})();
 document.body.insertAdjacentHTML("beforeend", `
   <section id="svPanel" class="sv-panel" aria-label="조사 입력">
     <div class="sv-head">

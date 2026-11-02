@@ -130,8 +130,26 @@ header.insertAdjacentHTML("afterbegin", `
     <span>조사자 <b id="svName"></b> <button type="button" id="svNameBtn" class="sv-link">변경</button></span>
     <label class="sv-date">조사일 <input type="date" id="svDate"></label>
     <span id="svDateWarn" class="warn" hidden>오늘이 아닌 날짜로 기록 중</span>
+    <label class="sv-hide"><input type="checkbox" id="svHidePins"> 올라간 핀 숨기기</label>
+    <label class="sv-hide"><input type="checkbox" id="svHideRoads"> 올라간 구간 숨기기</label>
     <span class="sv-private">이 기록은 공개 지도에 바로 나오지 않습니다</span>
   </div>${inappHtml()}`);
+// 이미 지도에 올라간(합친) 핀·보행 구간 숨기기 — 도로를 찍을 때 기존 핀·구간이 자꾸 눌리는 불편 때문(사용자 요청).
+// 내 기기의 조사 기록 핀은 그대로 보임. 선택은 기기에 기억
+(function () {
+  const KEY = "walkmap.survey.hide";
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch {}
+  const pins = $("#svHidePins"), roads = $("#svHideRoads");
+  const apply = () => {
+    pins.checked ? markerLayer.remove() : markerLayer.addTo(map);
+    const roadOn = !roads.checked && document.getElementById("showRoads").checked;
+    roadOn ? roadLayer.addTo(map) : roadLayer.remove();
+    try { localStorage.setItem(KEY, JSON.stringify({ pins: pins.checked, roads: roads.checked })); } catch {}
+  };
+  pins.checked = !!saved.pins; roads.checked = !!saved.roads;
+  pins.onchange = roads.onchange = apply;
+  apply();
+})();
 document.body.insertAdjacentHTML("beforeend", `
   <section id="svPanel" class="sv-panel" aria-label="조사 입력">
     <div class="sv-head">
