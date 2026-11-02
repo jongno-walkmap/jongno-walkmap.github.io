@@ -83,13 +83,14 @@ function isOpenNow(place) {
     return b > a ? (m >= a && m < b) : (m >= a || m < b); };
   if ((h[day] || []).some(r => inRange(r, minutes))) return true;
   // 전날 밤에 시작해 자정을 넘는 시간대
-  return (h[prev] || []).some(([s,e]) => toMin(e) <= toMin(s) && minutes < toMin(e));
+  if ((h[prev] || []).some(([s,e]) => toMin(e) <= toMin(s) && minutes < toMin(e))) return true;
+  return h[day] === null ? null : false;   // 그 요일만 null = 그날은 확인불가
 }
 function hoursText(h) {
   if (h === "24h") return "24시간";
   if (!h) return "확인불가";
   return ["mon","tue","wed","thu","fri","sat","sun"]
-    .map(d => `${DAY_KO[d]} ${(h[d]||[]).length ? h[d].map(r => r.join("–")).join(", ") : "휴무"}`).join(" · ");
+    .map(d => `${DAY_KO[d]} ${h[d] === null ? "확인불가" : (h[d]||[]).length ? h[d].map(r => r.join("–")).join(", ") : "휴무"}`).join(" · ");
 }
 
 // ── 시민 제보 (프로토타입: 이 브라우저에만 저장) ──────
