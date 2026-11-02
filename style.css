@@ -143,6 +143,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;white-space:
 .ghost{white-space:nowrap}
 .ghost.feedback{border-color:var(--ink);color:var(--ink);font-weight:700}
 .ghost .sm{display:none}
+@media (max-width:400px){ h1{font-size:.9rem} .title-btns{gap:3px} .title-btns .ghost{padding:4px 5px} }
 @media (max-width:440px){ .ghost .lg{display:none} .ghost .sm{display:inline} }
 .report-form textarea{width:100%;min-height:64px;border:1.5px solid var(--line);border-radius:6px;padding:8px;font:inherit;font-size:.88rem}
 .btn{margin-top:8px;width:100%;border:none;border-radius:8px;background:var(--ink);color:#fff;padding:11px;font-weight:700;cursor:pointer}
