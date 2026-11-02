@@ -87,7 +87,8 @@ h1{font-size:1.15rem;font-weight:800;margin:0;letter-spacing:-.01em}
 
 .road-legend{position:fixed;left:10px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:600;
   background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:6px 10px;display:flex;gap:12px;font-size:.78rem}
-.road-legend span{display:inline-flex;align-items:center;gap:5px}
+.road-legend span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+@media (max-width:420px){ .road-legend{gap:8px;font-size:.7rem;padding:5px 8px} .road-legend .ln{width:14px} .rl-fold{white-space:nowrap;padding-left:6px} }
 /* 선 색 범례 접기(기본은 펼침, 기기에 기억 — 사용자 요청) */
 .rl-fold{background:none;border:none;border-left:1px solid var(--line);color:var(--sub);font:inherit;font-size:.72rem;padding:0 0 0 8px;margin-left:-4px;cursor:pointer}
 .rl-open{display:none;background:none;border:none;color:var(--ink);font:inherit;font-size:.74rem;font-weight:700;padding:0;cursor:pointer}
