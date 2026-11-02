@@ -551,7 +551,8 @@ function openLight(l) {
     ${verificationRow(l.verification)}
     <dl class="facts"><dt>위치</dt><dd>${l.lat.toFixed(5)}, ${l.lng.toFixed(5)}</dd>
       ${l.location ? `<dt>위치 설명</dt><dd>${esc(l.location)}</dd>` : ""}${l.mount ? `<dt>설치 형태</dt><dd>${esc(l.mount)}</dd>` : ""}${l.note ? `<dt>현장 메모</dt><dd>${esc(l.note)}</dd>` : ""}</dl>
-    <p class="note">설치 개수이며, 실제 조도(밝기)를 측정한 값이 아닙니다.</p>`);
+    <p class="note">설치 개수이며, 실제 조도(밝기)를 측정한 값이 아닙니다.</p>
+    ${reportBox(`${l.type}${l.location ? " · " + l.location : ""} (${l.lat.toFixed(5)}, ${l.lng.toFixed(5)})`, l.id)}`);
 }
 buildGrid();
 

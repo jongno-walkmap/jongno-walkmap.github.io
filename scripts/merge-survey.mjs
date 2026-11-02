@@ -137,7 +137,7 @@ for (const it of items) {
   if (rec.targetId) {   // ‘이 핀 고치기’로 만든 기록 → 그 핀을 덮어씀(중복 검사 안 함)
     const ok = !!findTarget(kind, rec.targetId);
     decisions[rec.id] = ok ? `update:${rec.targetId}` : (decisions[rec.id] ?? "ask");
-    report.push({ ...it, entry, near: [], warn: [ok ? `지도 핀 고치기 (${rec.targetId})` : `고칠 핀 ${rec.targetId} 이(가) 지도에 없음`] });
+    report.push({ ...it, entry, near: [], warn: [ok ? (kind === "light" && rec.data?.count === 0 ? `가로등 삭제 요청 (${rec.targetId}, 현장에 없음)` : `지도 핀 고치기 (${rec.targetId})`) : `고칠 핀 ${rec.targetId} 이(가) 지도에 없음`] });
     continue;
   }
   if (isEdited(rec)) {   // 합친 뒤 조사자가 고친 기록 → 같은 핀을 덮어씀(중복 검사 안 함)
@@ -232,6 +232,11 @@ for (const r of report) {
   }
   const t = findTarget(kind, targetId);
   if (!t) { console.error(`${r.rec.id}: 대상 ${targetId} 를 찾지 못해 건너뜀`); continue; }
+  if (act === "update" && kind === "light" && e.count === 0) {   // ‘이 가로등 고치기’에서 개수 0 = 현장에 없음 → 삭제
+    lights.value.splice(lights.value.indexOf(t), 1);
+    log.push(`삭제 ${targetId} 가로등 (현장에 없음)`); applied[r.rec.id] = { result: `removed:${targetId}`, updatedAt: r.rec.updatedAt };
+    continue;
+  }
   if (act === "update") {   // 같은 기록의 새 버전 또는 ‘이 핀 고치기’: 값을 새것으로
     let photos, added = [];
     if (r.rec.targetId) {     // 지도에 남길 기존 사진 + 새 사진. 다시 내보낸 경우 지난번에 넣은 새 사진은 지우고 다시 복사

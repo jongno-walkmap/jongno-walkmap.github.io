@@ -834,8 +834,8 @@ paneExport.addEventListener("click", async e => {
 // ── 지도 핀 바로 고치기 ───────────────────────────
 // 공개 지도에 이미 있는 핀·보행 구간을 누르면 정보창에 ‘이 핀 고치기’ 버튼이 생깁니다.
 // 현재 값을 입력판에 채워 고친 뒤 저장 → 내보내기 → 합칠 때 같은 핀(targetId)을 덮어씁니다.
-function editButton(onEdit) {
-  sheetBody.insertAdjacentHTML("afterbegin", `<button type="button" class="btn sv-editpin">✏️ 이 핀 고치기 (조사 모드)</button>`);
+function editButton(onEdit, label = "✏️ 이 핀 고치기 (조사 모드)") {
+  sheetBody.insertAdjacentHTML("afterbegin", `<button type="button" class="btn sv-editpin">${label}</button>`);
   $(".sv-editpin", sheetBody).onclick = () => { closeSheet(); showTab("new"); onEdit(); };
 }
 function editPlace(p) {
@@ -854,9 +854,23 @@ function editRoad(r) {
     coords: f.geometry.coordinates, coordSource: "map", keepPhotos: r.photos || [] });
   map.panTo([f.geometry.coordinates[0][1], f.geometry.coordinates[0][0]]);
 }
-const origOpenPlace = openPlace, origOpenRoad = openRoad;
+// 가로등: 현장 조사 가로등(light-…)만 고칠 수 있음. 위치는 핀을 끌어 옮기고, 현장에 없으면 개수 0 → 합칠 때 지도에서 삭제.
+// 보안등(공공데이터)은 기관 자료라 직접 고치지 않고 정보창의 ‘제보하러 가기’로 남김(2026-11 사용자 결정)
+function editLight(l) {
+  startDraft("streetlight", { id: newId(), unsaved: true, targetId: l.id, kind: "light", category: "streetlight",
+    data: { count: l.count ?? 1, type: l.type === "보안등" ? "보안등" : "가로등", ...(l.location ? { location: l.location } : {}) },
+    memo: l.note || "", lat: l.lat, lng: l.lng, coordSource: l.coordSource === "gps" ? "gps" : "map", keepPhotos: [] });
+  map.panTo([l.lat, l.lng]);
+  toast("위치가 다르면 핀을 끌어 옮기고, 현장에 이 가로등이 없으면 개수를 0으로 저장하세요.");
+}
+const origOpenPlace = openPlace, origOpenRoad = openRoad, origOpenLight = openLight;
 openPlace = p => { origOpenPlace(p); editButton(() => editPlace(p)); };
 openRoad = r => { origOpenRoad(r); editButton(() => editRoad(r)); };
+openLight = l => {
+  origOpenLight(l);
+  if (l.verification?.status === "field" && /^light-/.test(l.id || "")) editButton(() => editLight(l), "✏️ 이 가로등 고치기 (조사 모드)");
+  else sheetBody.insertAdjacentHTML("afterbegin", `<p class="sv-howto">보안등은 공공데이터라 조사 모드에서 직접 고치지 않습니다. 현장과 다르면 아래 ‘제보하러 가기’로 남겨 주세요.</p>`);
+};
 
 // ── 시작 ─────────────────────────────────────────
 startDraft(null);
