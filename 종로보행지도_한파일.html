@@ -54,6 +54,7 @@ h1{font-size:1.15rem;font-weight:800;margin:0;letter-spacing:-.01em}
 .toggles{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.85rem}
 .switch{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 .switch input{width:18px;height:18px;accent-color:var(--ink)}
+.switch[hidden]{display:none}
 .count{color:var(--sub);margin-left:auto}
 
 #map{flex:1;min-height:0}
@@ -301,7 +302,7 @@ body.sv-wide .grid-legend{right:410px}
   <div id="filterBox">
   <nav class="filters" aria-label="분류 필터" id="filters"></nav>
   <div class="toggles">
-    <label class="switch"><input type="checkbox" id="openNow"><span>병원·약국·화장실은 지금 운영 중인 곳만</span></label>
+    <label class="switch open-now"><input type="checkbox" id="openNow"><span id="openNowText">병원·약국·화장실은 지금 운영 중인 곳만</span></label>
     <label class="switch"><input type="checkbox" id="showRoads" checked><span>보행 구간 표시</span></label>
     <span id="count" class="count" aria-live="polite"></span>
   </div>
@@ -1543,6 +1544,9 @@ const DAY_KO = { mon:"월", tue:"화", wed:"수", thu:"목", fri:"금", sat:"토
 const REPORT_TYPES = ["폐쇄됨","철거됨","공사중","운영시간 다름","정보가 다름","기타"];
 
 const state = { active:new Set(Object.keys(CATEGORIES)), openNow:false, showRoads:true, showLights:false };
+// ‘지금 운영 중’ 필터를 거는 분류. AED·벤치·계단·쓰레기통 등은 필터를 켜도 그대로 보입니다.
+// 이 분류 칩이 하나도 켜져 있지 않으면 필터 자체를 숨김(조원 피드백: 전체 해제 상태에서 켜면 아무것도 안 떠서 어색함)
+const OPEN_FILTER_CATS = ["hospital", "pharmacy", "toilet"];
 
 // ── 지도 ─────────────────────────────────────────
 const B = window.SURVEY_BOUNDS;
@@ -1645,6 +1649,14 @@ function syncAllChip() {
   allChip.textContent = all ? "전체 해제" : "전체 선택";
   allChip.setAttribute("aria-pressed", all);
   Object.entries(catChips).forEach(([k, b]) => b.setAttribute("aria-pressed", state.active.has(k)));
+  syncOpenNow();
+}
+function syncOpenNow() {
+  const on = OPEN_FILTER_CATS.filter(k => state.active.has(k));
+  const box = document.getElementById("openNow");
+  box.closest("label").hidden = !on.length;
+  document.getElementById("openNowText").textContent = `${on.map(k => CATEGORIES[k].label).join("·")}은 지금 운영 중인 곳만`;
+  if (!on.length && state.openNow) { state.openNow = false; box.checked = false; }
 }
 allChip.onclick = () => {
   const all = state.active.size === Object.keys(CATEGORIES).length;
@@ -1748,8 +1760,6 @@ function pinIcon(place, open) {
   return L.divIcon({ className:"", iconSize:[22,22], iconAnchor:[11,22],
     html:`<div class="${cls}" style="--c:${c.color}"><b>${c.short}</b></div>` });
 }
-// ‘지금 운영 중’ 필터를 거는 분류. AED·벤치·계단·쓰레기통 등은 필터를 켜도 그대로 보입니다.
-const OPEN_FILTER_CATS = ["hospital", "pharmacy", "toilet"];
 function render() {
   markerLayer.clearLayers();
   let shown = 0, hiddenUnknown = 0;
