@@ -1455,7 +1455,7 @@
   },
   "s-mvrfokz8-h49ej": {
     "result": "light-0231",
-    "updatedAt": "2026-10-28T01:26:30.452Z"
+    "updatedAt": "2026-11-02T06:37:17.383Z"
   },
   "s-mvrfomcd-v6ohf": {
     "result": "light-0232",
@@ -3020,5 +3020,69 @@
   "s-mvygp539-3fqy3": {
     "result": "toilet-021",
     "updatedAt": "2026-11-01T23:29:19.365Z"
+  },
+  "s-mvyvqbry-b8jnc": {
+    "result": "seg-115",
+    "updatedAt": "2026-11-02T06:30:08.926Z"
+  },
+  "s-mvyvrf62-9szni": {
+    "result": "seg-116",
+    "updatedAt": "2026-11-02T06:30:59.978Z"
+  },
+  "s-mvyvs62z-srepk": {
+    "result": "seg-117",
+    "updatedAt": "2026-11-02T06:31:34.859Z"
+  },
+  "s-mvyvsspu-96yi5": {
+    "result": "seg-118",
+    "updatedAt": "2026-11-02T06:32:04.194Z"
+  },
+  "s-mvyvtf2k-jc6sc": {
+    "result": "seg-119",
+    "updatedAt": "2026-11-02T06:32:33.164Z"
+  },
+  "s-mvyvtywa-by1ue": {
+    "result": "seg-120",
+    "updatedAt": "2026-11-02T06:32:58.858Z"
+  },
+  "s-mvyvwfkh-eh5d7": {
+    "result": "seg-121",
+    "updatedAt": "2026-11-02T06:34:53.777Z"
+  },
+  "s-mvyvxqko-vppcn": {
+    "result": "seg-122",
+    "updatedAt": "2026-11-02T06:35:54.696Z"
+  },
+  "s-mvyvyocd-38hn7": {
+    "result": "seg-123",
+    "updatedAt": "2026-11-02T06:36:38.461Z"
+  },
+  "s-mvyw0dps-9sf1y": {
+    "result": "seg-124",
+    "updatedAt": "2026-11-02T06:37:58.000Z"
+  },
+  "s-mvyw0q8i-jgcme": {
+    "result": "seg-125",
+    "updatedAt": "2026-11-02T06:38:14.226Z"
+  },
+  "s-mvyw0xxh-am0vy": {
+    "result": "seg-126",
+    "updatedAt": "2026-11-02T06:38:24.197Z"
+  },
+  "s-mvyw16m2-cejvn": {
+    "result": "seg-127",
+    "updatedAt": "2026-11-02T06:38:35.450Z"
+  },
+  "s-mvyw1ks5-pbo0n": {
+    "result": "seg-128",
+    "updatedAt": "2026-11-02T06:38:53.813Z"
+  },
+  "s-mvyw1utb-8eu8j": {
+    "result": "seg-129",
+    "updatedAt": "2026-11-02T06:39:06.815Z"
+  },
+  "s-mvyw28g3-sc6g2": {
+    "result": "seg-130",
+    "updatedAt": "2026-11-02T06:39:24.483Z"
   }
 }

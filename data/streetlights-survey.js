@@ -233,7 +233,7 @@ window.STREETLIGHTS_SURVEY = [
   {"lat":37.56707,"lng":126.985664,"count":1,"type":"가로등","id":"light-0228","verification":{"status":"field","date":"2026-10-28","by":"강준수"},"coordSource":"map"},
   {"lat":37.566947,"lng":126.985664,"count":1,"type":"가로등","id":"light-0229","verification":{"status":"field","date":"2026-10-28","by":"강준수"},"coordSource":"map"},
   {"lat":37.566798,"lng":126.985621,"count":1,"type":"가로등","id":"light-0230","verification":{"status":"field","date":"2026-10-28","by":"강준수"},"coordSource":"map"},
-  {"lat":37.566674,"lng":126.985637,"count":1,"type":"가로등","id":"light-0231","verification":{"status":"field","date":"2026-10-28","by":"강준수"},"coordSource":"map"},
+  {"lat":37.566732,"lng":126.985581,"count":1,"type":"가로등","id":"light-0231","verification":{"status":"field","date":"2026-10-28","by":"강준수"},"coordSource":"map"},
   {"lat":37.566577,"lng":126.985669,"count":1,"type":"가로등","id":"light-0232","verification":{"status":"field","date":"2026-10-28","by":"강준수"},"coordSource":"map"},
   {"lat":37.566423,"lng":126.985686,"count":1,"type":"가로등","id":"light-0233","verification":{"status":"field","date":"2026-10-28","by":"강준수"},"coordSource":"map"},
   {"lat":37.56626,"lng":126.985605,"count":1,"type":"가로등","id":"light-0234","verification":{"status":"field","date":"2026-10-28","by":"강준수"},"coordSource":"map"},
