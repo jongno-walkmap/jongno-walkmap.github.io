@@ -224,6 +224,18 @@ function selectRoad(f, latlng) {
 }
 function clearRoadSel() { if (roadSel) roadSel.remove(); roadSel = null; }
 
+// 선 색 범례(인도·차도·좁은 길) 접기/펼치기 — 기본 펼침, 접은 상태는 기기에 기억(사용자 요청)
+const ROAD_LEGEND_KEY = "walkmap.roadLegendFolded";
+const roadLegendEl = document.getElementById("roadLegend");
+function setRoadLegend(folded, remember = true) {
+  roadLegendEl.classList.toggle("folded", folded);
+  document.getElementById("roadLegendFold").setAttribute("aria-expanded", !folded);
+  if (remember) try { localStorage.setItem(ROAD_LEGEND_KEY, folded ? "1" : ""); } catch {}
+}
+document.getElementById("roadLegendFold").onclick = () => setRoadLegend(true);
+document.getElementById("roadLegendOpen").onclick = () => setRoadLegend(false);
+try { if (localStorage.getItem(ROAD_LEGEND_KEY) === "1") setRoadLegend(true, false); } catch {}
+
 // ── 마커 ─────────────────────────────────────────
 const markerLayer = L.layerGroup().addTo(map);
 function pinIcon(place, open) {
