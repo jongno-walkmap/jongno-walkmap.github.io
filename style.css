@@ -137,8 +137,9 @@ dl.facts dd{margin:0;font-weight:600}
 /* 범례 전체 접기: 접으면 작은 버튼 하나만 남음(조원 피드백). ‘설치 개수 기준’은 버튼에도 표시 */
 .gl-open{display:none;background:none;border:none;color:#FFE38A;font:inherit;font-weight:700;font-size:.8rem;cursor:pointer;padding:2px 2px;min-height:32px}
 .gl-open small{font-weight:400;color:#AAB4C8;margin:0 2px}
-.grid-legend.folded{padding:4px 10px}
-.grid-legend.folded > :not(.gl-open){display:none}
+.grid-legend.folded{padding:4px 10px;width:200px}
+.grid-legend.folded > :not(.gl-open):not(.ramp):not(.ramp-labels){display:none}   /* 접어도 0~5+ 색 막대는 남김(조원 피드백) */
+.grid-legend.folded{padding-bottom:6px}
 .grid-legend.folded .gl-open{display:block}
 .grid-legend .cellsize{font-weight:400;color:var(--sub)}
 .grid-legend .steps{display:flex;gap:8px;flex-wrap:wrap}
