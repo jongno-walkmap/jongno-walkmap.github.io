@@ -1,14 +1,14 @@
 // ── 분류 정의 ─────────────────────────────────────
-const CATEGORIES = {
+const CATEGORIES = {   // 순서 = 필터 칩 순서. 건강·안전과 바로 관련된 병원·약국·AED를 맨 앞에(조원 피드백)
+  hospital: { label:"병원",   short:"병원", color:"#B23A2E" },
+  pharmacy: { label:"약국",   short:"약국", color:"#0F8577" },
+  aed:      { label:"AED",    short:"AED", color:"#C2185B" },
   toilet:   { label:"화장실", short:"WC",  color:"#2459B3" },
   bench:    { label:"벤치",   short:"벤치", color:"#5C7F2E" },
   stairs:   { label:"계단",   short:"계단", color:"#7A4FA8" },
-  aed:      { label:"AED",    short:"AED", color:"#C2185B" },
-  hospital: { label:"병원",   short:"병원", color:"#B23A2E" },
-  pharmacy: { label:"약국",   short:"약국", color:"#0F8577" },
-  fire:     { label:"소방서", short:"119", color:"#D9480F" },
   police:   { label:"지구대", short:"112", color:"#1E3A5F" },
-  trash:    { label:"쓰레기통", short:"휴지", color:"#8A6D3B" },
+  trash:    { label:"쓰레기통", short:"휴지통", color:"#8A6D3B" },
+  // 소방서는 조사 범위 안에 없어서 분류에서 뺌(2026-11 사용자 결정). 다시 필요하면: fire: { label:"소방서", short:"119", color:"#D9480F" }
 };
 const VSTATUS = { field:"현장확인", agency:"기관확인", unverified:"확인불가" };
 const DAYS = ["sun","mon","tue","wed","thu","fri","sat"];
@@ -230,7 +230,7 @@ function pinIcon(place, open) {
   const c = CATEGORIES[place.category];
   const cls = ["pin", place.verification.status === "unverified" ? "unverified" : "", open === false ? "closed" : ""].join(" ");
   return L.divIcon({ className:"", iconSize:[22,22], iconAnchor:[11,22],
-    html:`<div class="${cls}" style="--c:${c.color}"><b>${c.short}</b></div>` });
+    html:`<div class="${cls}" style="--c:${c.color}"><b${/^[가-힣]{3}$/.test(c.short) ? ' class="s3"' : ""}>${c.short}</b></div>` });
 }
 function render() {
   markerLayer.clearLayers();
@@ -461,6 +461,18 @@ function toggleLights() {
   syncLightPoints();
 }
 map.on("zoomend", syncLightPoints);
+
+// 가로등 범례 설명 접기/펼치기(조원 피드백). ‘설치 개수이며 조도 아님’ 한 줄은 접어도 항상 보임. 기기에 기억
+const LEGEND_KEY = "walkmap.lightLegendFolded";
+const gridLegendEl = document.getElementById("gridLegend"), legendFold = document.getElementById("legendFold");
+function setLegendFold(folded, remember = true) {
+  gridLegendEl.classList.toggle("folded", folded);
+  legendFold.textContent = folded ? "설명 ▾" : "접기 ▴";
+  legendFold.setAttribute("aria-expanded", !folded);
+  if (remember) try { localStorage.setItem(LEGEND_KEY, folded ? "1" : ""); } catch {}
+}
+legendFold.onclick = () => setLegendFold(!gridLegendEl.classList.contains("folded"));
+try { if (localStorage.getItem(LEGEND_KEY) === "1") setLegendFold(true, false); } catch {}
 
 // 지금 가로등 격자에 들어 있는 자료의 범위(‘0개’가 등이 없다는 뜻으로 읽히지 않게 정보창에 함께 안내)
 const LIGHT_DATA_NOTE = "보안등 공공데이터(종로구·중구)와 조사팀이 현장에서 기록한 가로등을 합친 것입니다. 청계천~종로 사이는 골목은 보안등 공공데이터, 큰길가(종로·청계천로·을지로·삼일대로 등)는 현장 기록을 쓰고, 종로 북쪽은 보안등과 10m 안에 겹치지 않는 현장 기록을 모두 더했습니다. 큰길 가로등 공식 자료는 아직 없어 빠진 등이 있을 수 있습니다.";

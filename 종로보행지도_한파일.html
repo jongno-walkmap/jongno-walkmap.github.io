@@ -63,6 +63,7 @@ h1{font-size:1.15rem;font-weight:800;margin:0;letter-spacing:-.01em}
 .pin{width:22px;height:22px;border-radius:50% 50% 50% 3px;transform:rotate(-45deg);
   background:var(--c);border:1.5px solid #fff;box-shadow:0 1px 2px rgba(30,42,50,.4);display:grid;place-items:center}
 .pin b{transform:rotate(45deg);color:#fff;font-size:8.5px;font-weight:800;letter-spacing:-.04em;white-space:nowrap}
+.pin b.s3{font-size:6.6px;letter-spacing:-.08em}   /* 한글 세 글자(휴지통) */
 .pin.unverified{border-style:dashed;border-color:#fff;opacity:.8}
 .pin.closed{background:#9AA3A8}
 
@@ -126,6 +127,12 @@ dl.facts dd{margin:0;font-weight:600}
 .grid-legend{position:fixed;right:10px;bottom:calc(30px + env(safe-area-inset-bottom,0px));z-index:600;
   background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:.78rem;max-width:230px}
 .grid-legend strong{display:block;margin-bottom:5px;font-size:.82rem}
+.gl-head{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px}
+.gl-head strong{margin:0;flex:1}
+.gl-fold{flex:none;background:none;border:1px solid #3A4766;border-radius:5px;color:#C9D2E3;font:inherit;font-size:.72rem;padding:3px 7px;cursor:pointer;min-height:28px}
+.grid-legend .gl-short{display:none}
+.grid-legend.folded .gl-short{display:block}
+.grid-legend.folded #legendMore{display:none}
 .grid-legend .cellsize{font-weight:400;color:var(--sub)}
 .grid-legend .steps{display:flex;gap:8px;flex-wrap:wrap}
 .grid-legend .steps span{display:inline-flex;align-items:center;gap:4px}
@@ -318,10 +325,12 @@ body.sv-wide .grid-legend{right:410px}
 </div>
 
 <div class="grid-legend" id="gridLegend" hidden aria-label="가로등 개수 범례">
-  <strong>가로등 개수 <span class="cellsize">(약 25m×25m 칸 기준)</span></strong>
+  <div class="gl-head"><strong>가로등 개수 <span class="cellsize">(약 25m×25m 칸 기준)</span></strong>
+    <button type="button" id="legendFold" class="gl-fold" aria-expanded="true" aria-controls="legendMore">접기 ▴</button></div>
   <div class="ramp" aria-hidden="true"></div>
   <div class="ramp-labels"><span>0</span><span>1</span><span>2</span><span>3–4</span><span>5+</span></div>
-  <p>설치 개수를 밝기로 표현한 것이며, 실제 조도(밝기)를 측정한 값이 아닙니다. 조사 범위 밖은 자료가 없어 어둡게 표시됩니다.<br>지금 자료: 종로구 보안등(2026-07-03 기준)·중구 보안등(2025-10-31 기준) + 현장 조사 가로등(2026-10~11: 종로 남쪽은 큰길가만, 종로 북쪽은 보안등과 10m 안에 겹치지 않는 것). 큰길 가로등 공식 자료는 아직 없음.</p>
+  <p class="gl-short">설치 개수이며 실제 조도(밝기)가 아닙니다.</p>
+  <p id="legendMore">설치 개수를 밝기로 표현한 것이며, 실제 조도(밝기)를 측정한 값이 아닙니다. 조사 범위 밖은 자료가 없어 어둡게 표시됩니다.<br>지금 자료: 종로구 보안등(2026-07-03 기준)·중구 보안등(2025-10-31 기준) + 현장 조사 가로등(2026-10~11: 종로 남쪽은 큰길가만, 종로 북쪽은 보안등과 10m 안에 겹치지 않는 것). 큰길 가로등 공식 자료는 아직 없음.</p>
 </div>
 
 <section id="sheet" class="sheet" aria-hidden="true" role="dialog" aria-labelledby="sheetTitle">
@@ -1527,16 +1536,16 @@ window.STREETLIGHTS_SURVEY = [
 </script>
 <script>/* app.js */
 // ── 분류 정의 ─────────────────────────────────────
-const CATEGORIES = {
+const CATEGORIES = {   // 순서 = 필터 칩 순서. 건강·안전과 바로 관련된 병원·약국·AED를 맨 앞에(조원 피드백)
+  hospital: { label:"병원",   short:"병원", color:"#B23A2E" },
+  pharmacy: { label:"약국",   short:"약국", color:"#0F8577" },
+  aed:      { label:"AED",    short:"AED", color:"#C2185B" },
   toilet:   { label:"화장실", short:"WC",  color:"#2459B3" },
   bench:    { label:"벤치",   short:"벤치", color:"#5C7F2E" },
   stairs:   { label:"계단",   short:"계단", color:"#7A4FA8" },
-  aed:      { label:"AED",    short:"AED", color:"#C2185B" },
-  hospital: { label:"병원",   short:"병원", color:"#B23A2E" },
-  pharmacy: { label:"약국",   short:"약국", color:"#0F8577" },
-  fire:     { label:"소방서", short:"119", color:"#D9480F" },
   police:   { label:"지구대", short:"112", color:"#1E3A5F" },
-  trash:    { label:"쓰레기통", short:"휴지", color:"#8A6D3B" },
+  trash:    { label:"쓰레기통", short:"휴지통", color:"#8A6D3B" },
+  // 소방서는 조사 범위 안에 없어서 분류에서 뺌(2026-11 사용자 결정). 다시 필요하면: fire: { label:"소방서", short:"119", color:"#D9480F" }
 };
 const VSTATUS = { field:"현장확인", agency:"기관확인", unverified:"확인불가" };
 const DAYS = ["sun","mon","tue","wed","thu","fri","sat"];
@@ -1758,7 +1767,7 @@ function pinIcon(place, open) {
   const c = CATEGORIES[place.category];
   const cls = ["pin", place.verification.status === "unverified" ? "unverified" : "", open === false ? "closed" : ""].join(" ");
   return L.divIcon({ className:"", iconSize:[22,22], iconAnchor:[11,22],
-    html:`<div class="${cls}" style="--c:${c.color}"><b>${c.short}</b></div>` });
+    html:`<div class="${cls}" style="--c:${c.color}"><b${/^[가-힣]{3}$/.test(c.short) ? ' class="s3"' : ""}>${c.short}</b></div>` });
 }
 function render() {
   markerLayer.clearLayers();
@@ -1990,6 +1999,18 @@ function toggleLights() {
 }
 map.on("zoomend", syncLightPoints);
 
+// 가로등 범례 설명 접기/펼치기(조원 피드백). ‘설치 개수이며 조도 아님’ 한 줄은 접어도 항상 보임. 기기에 기억
+const LEGEND_KEY = "walkmap.lightLegendFolded";
+const gridLegendEl = document.getElementById("gridLegend"), legendFold = document.getElementById("legendFold");
+function setLegendFold(folded, remember = true) {
+  gridLegendEl.classList.toggle("folded", folded);
+  legendFold.textContent = folded ? "설명 ▾" : "접기 ▴";
+  legendFold.setAttribute("aria-expanded", !folded);
+  if (remember) try { localStorage.setItem(LEGEND_KEY, folded ? "1" : ""); } catch {}
+}
+legendFold.onclick = () => setLegendFold(!gridLegendEl.classList.contains("folded"));
+try { if (localStorage.getItem(LEGEND_KEY) === "1") setLegendFold(true, false); } catch {}
+
 // 지금 가로등 격자에 들어 있는 자료의 범위(‘0개’가 등이 없다는 뜻으로 읽히지 않게 정보창에 함께 안내)
 const LIGHT_DATA_NOTE = "보안등 공공데이터(종로구·중구)와 조사팀이 현장에서 기록한 가로등을 합친 것입니다. 청계천~종로 사이는 골목은 보안등 공공데이터, 큰길가(종로·청계천로·을지로·삼일대로 등)는 현장 기록을 쓰고, 종로 북쪽은 보안등과 10m 안에 겹치지 않는 현장 기록을 모두 더했습니다. 큰길 가로등 공식 자료는 아직 없어 빠진 등이 있을 수 있습니다.";
 function openCell(cell, r, c) {
@@ -2087,7 +2108,7 @@ const FIELDS = {
   bench: [["count","count","개수"], ["text","location","위치 설명","예: 공원 서쪽 산책로"]],
   aed: [["text","location","설치 위치","예: 건물 1층 로비 안내데스크 옆"], ["hours","hours","이용 가능 시간 (건물 개방시간)"]],
   trash: [["text","location","위치 설명","예: 버스정류장 옆"], ["tri","recycling","분리배출 칸"]],
-  hospital: NAME_HOURS, pharmacy: NAME_HOURS, fire: NAME_ONLY, police: NAME_ONLY,
+  hospital: NAME_HOURS, pharmacy: NAME_HOURS, police: NAME_ONLY,
   streetlight: [
     ["count","count","개수 (쌍등이면 2)",1],
     ["choice","type","종류",["가로등","보안등"]],

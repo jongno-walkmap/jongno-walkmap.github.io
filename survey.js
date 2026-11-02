@@ -55,7 +55,7 @@ const FIELDS = {
   bench: [["count","count","개수"], ["text","location","위치 설명","예: 공원 서쪽 산책로"]],
   aed: [["text","location","설치 위치","예: 건물 1층 로비 안내데스크 옆"], ["hours","hours","이용 가능 시간 (건물 개방시간)"]],
   trash: [["text","location","위치 설명","예: 버스정류장 옆"], ["tri","recycling","분리배출 칸"]],
-  hospital: NAME_HOURS, pharmacy: NAME_HOURS, fire: NAME_ONLY, police: NAME_ONLY,
+  hospital: NAME_HOURS, pharmacy: NAME_HOURS, police: NAME_ONLY,
   streetlight: [
     ["count","count","개수 (쌍등이면 2)",1],
     ["choice","type","종류",["가로등","보안등"]],
