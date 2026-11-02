@@ -138,6 +138,12 @@ dl.facts dd{margin:0;font-weight:600}
 .report-form label.opt{border:1.5px solid var(--line);border-radius:6px;padding:5px 9px;font-size:.84rem;cursor:pointer}
 .report-form label.opt:has(input:checked){border-color:var(--ink);font-weight:700}
 .report-form label.opt input{position:absolute;opacity:0}
+.report-form .report-go{display:block;text-align:center;text-decoration:none;margin:4px 0 6px}
+a.ghost{text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap}
+.ghost{white-space:nowrap}
+.ghost.feedback{border-color:var(--ink);color:var(--ink);font-weight:700}
+.ghost .sm{display:none}
+@media (max-width:440px){ .ghost .lg{display:none} .ghost .sm{display:inline} }
 .report-form textarea{width:100%;min-height:64px;border:1.5px solid var(--line);border-radius:6px;padding:8px;font:inherit;font-size:.88rem}
 .btn{margin-top:8px;width:100%;border:none;border-radius:8px;background:var(--ink);color:#fff;padding:11px;font-weight:700;cursor:pointer}
 .note{font-size:.78rem;color:var(--sub);margin-top:6px}

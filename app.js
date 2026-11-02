@@ -76,7 +76,6 @@ const toMin = s => { const [h,m] = s.split(":").map(Number); return h*60 + m; };
 
 // 반환: true(운영중) | false(운영 안 함) | null(확인불가)
 function isOpenNow(place) {
-  if (hasActiveClosureReport(place)) return false;
   const h = place.hours;
   if (h === "24h") return true;
   if (!h) return null;
@@ -96,18 +95,39 @@ function hoursText(h) {
     .map(d => `${DAY_KO[d]} ${h[d] === null ? "확인불가" : (h[d]||[]).length ? h[d].map(r => r.join("–")).join(", ") : "휴무"}`).join(" · ");
 }
 
-// ── 시민 제보 (프로토타입: 이 브라우저에만 저장) ──────
-const REPORT_KEY = "walkmap.reports.v1";
-function loadReports() { try { return JSON.parse(localStorage.getItem(REPORT_KEY)) || {}; } catch { return {}; } }
-function saveReport(id, r) {
-  const all = loadReports(); (all[id] ||= []).unshift(r);
-  try { localStorage.setItem(REPORT_KEY, JSON.stringify(all)); } catch {}
+// ── 시민 제보·의견 → 구글 설문지 (2026-11 사용자 결정) ──────
+// 예전에는 이 브라우저에만 저장돼 조사팀이 볼 수 없었음. 이제 구글 설문지로 받아 구글 시트에 모이고,
+// 조사팀이 확인한 뒤 데이터에 반영(원칙 5: 원본 정보는 바로 바꾸지 않음).
+// 칸 번호(entry.*)는 설문지 ‘양식 미리 작성’ 링크에서 가져옴. 설문지 질문을 지우고 다시 만들면 번호가 바뀌니 이 값도 바꿀 것
+const FEEDBACK_FORM = {
+  url: "https://docs.google.com/forms/d/e/1FAIpQLSfp_tEa_jzuUep55WBZD8tgktab_ONTOuojKNUjtXaWqehLuw/viewform",
+  kind: "entry.1620051914",   // 1. 무엇을 보내시나요?
+  place: "entry.1296598265",  // 2. 장소
+  pin: "entry.1861778599",    // 3. 핀 번호
+  type: "entry.1491404130",   // 4. 제보 종류 (보기 글자가 REPORT_TYPES와 같아야 함)
+  KIND_REPORT: "현장 제보 (지도 정보가 실제와 다름 등)",
+  KIND_OPINION: "사이트 의견·개선사항",
+};
+function feedbackUrl(fields) {
+  const q = new URLSearchParams({ usp: "pp_url" });
+  Object.entries(fields).forEach(([k, v]) => { if (v) q.append(FEEDBACK_FORM[k], v); });
+  return `${FEEDBACK_FORM.url}?${q}`;
 }
-// 검토 전 제보는 표시만 하고 원본 정보는 바꾸지 않습니다.
-// 관리자 승인 로직이 생기면 approved:true 인 '폐쇄됨/철거됨'만 상태에 반영합니다.
-function hasActiveClosureReport(place) {
-  return (loadReports()[place.id] || []).some(r => r.approved && ["폐쇄됨","철거됨"].includes(r.type));
+// 정보창 아래 ‘현장 상황 알리기’: 종류를 고르고 버튼을 누르면 장소·핀 번호·종류가 채워진 설문지가 새 창으로 열림
+function reportBox(name, id) {
+  return `<div class="report-form" data-name="${esc(name)}" data-id="${esc(id)}">
+      <h3>현장 상황 알리기</h3>
+      <p class="note" style="margin:0 0 8px">지도 정보가 실제와 다르면 알려 주세요. 해당하는 것을 고르고 아래 버튼을 누르면 장소가 채워진 설문지가 열립니다.</p>
+      <div class="opts">${REPORT_TYPES.map(t => `<label class="opt"><input type="radio" name="rtype" value="${t}">${t}</label>`).join("")}</div>
+      <a class="btn report-go" target="_blank" rel="noopener" href="${esc(feedbackUrl({ kind: FEEDBACK_FORM.KIND_REPORT, place: name, pin: id }))}">제보하러 가기 (구글 설문지) ↗</a>
+      <p class="note">보내 주신 제보는 조사팀이 확인한 뒤 지도에 반영합니다. 그 전까지 지도 정보는 바뀌지 않습니다.</p>
+    </div>`;
 }
+// 종류를 고르면 버튼 주소에 그 종류도 채워 넣음
+document.addEventListener("change", e => {
+  const box = e.target.closest(".report-form"); if (!box || e.target.name !== "rtype") return;
+  box.querySelector(".report-go").href = feedbackUrl({ kind: FEEDBACK_FORM.KIND_REPORT, place: box.dataset.name, pin: box.dataset.id, type: e.target.value });
+});
 
 // ── 필터 UI ──────────────────────────────────────
 const filtersEl = document.getElementById("filters");
@@ -183,6 +203,7 @@ function setFilters(hidden, remember = true) {
 }
 filterToggle.onclick = () => setFilters(!filterBox.hidden);
 try { if (localStorage.getItem(FILTER_KEY) === "1") setFilters(true, false); } catch {}
+document.getElementById("feedbackBtn").href = feedbackUrl({ kind: FEEDBACK_FORM.KIND_OPINION });
 aboutBtn.onclick = () => { about.hidden = !about.hidden; aboutBtn.setAttribute("aria-expanded", !about.hidden); };
 
 // ── 보행 구간 ────────────────────────────────────
@@ -343,7 +364,6 @@ function openPlace(p) {
   const statusHtml = open === true ? `<span class="status open">지금 운영 중</span>`
     : open === false ? `<span class="status shut">지금 운영 안 함</span>`
     : `<span class="status">운영 여부 확인불가</span>`;
-  const reports = loadReports()[p.id] || [];
   const photo = photoGallery(p.details.photos || (p.details.photo ? [p.details.photo] : []), p.name);
   showSheet(`
     <div class="cat" style="--c:${c.color}">${c.label}</div>
@@ -352,27 +372,8 @@ function openPlace(p) {
     ${photo}
     <p style="margin:0 0 10px">${statusHtml}</p>
     <dl class="facts">${detailRows(p)}</dl>
-    <div class="reports"><h3>시민 제보 ${reports.length ? `(${reports.length})` : ""}</h3>
-      ${reports.length ? `<ul>${reports.map(r => `<li><b>${esc(r.type)}</b> ${esc(r.memo)}
-        <div class="meta">${esc(r.date)} · ${r.approved ? "검토 완료" : "검토 전"}</div></li>`).join("")}</ul>`
-        : `<p class="note">아직 제보가 없습니다. 현장 상황이 다르면 알려주세요.</p>`}
-    </div>
-    <form class="report-form" id="reportForm">
-      <h3>현장 상황 알리기</h3>
-      <div class="opts">${REPORT_TYPES.map((t,i) =>
-        `<label class="opt"><input type="radio" name="type" value="${t}" ${i===0?"checked":""}>${t}</label>`).join("")}</div>
-      <textarea name="memo" placeholder="예: 10월 2일 오후 3시, 입구에 '공사로 폐쇄' 안내문" aria-label="상세 내용"></textarea>
-      <button class="btn" type="submit">제보 보내기</button>
-      <p class="note">제보는 검토 후 반영되며, 그 전까지 원래 정보와 함께 '검토 전'으로 표시됩니다.</p>
-    </form>`);
+    ${reportBox(p.name, p.id)}`);
   bindGallery();
-  document.getElementById("reportForm").onsubmit = e => {
-    e.preventDefault();
-    const f = new FormData(e.target);
-    saveReport(p.id, { type:f.get("type"), memo:f.get("memo").trim(),
-      date:new Date().toLocaleString("ko-KR", { timeZone:"Asia/Seoul" }), approved:false });
-    openPlace(p);
-  };
 }
 
 // 위치 사진: 첫 장이 대표, 여러 장이면 아래 작은 사진을 눌러 바꿔 봄
@@ -402,7 +403,8 @@ function openRoad(r) {
       ${r.note ? `<dt>현장 메모</dt><dd>${esc(r.note)}</dd>` : ""}
     </dl>
     ${lineKind(r) === "narrow" ? `<p class="note">형광 노랑 선(좁은 길): 측정한 유효 폭이 ${NARROW_M}m 미만인 구간입니다. ${NARROW_BASIS}.</p>` : ""}
-    <p class="note">측정된 환경 정보만 표시합니다. 이 구간의 안전 여부는 평가하지 않습니다.</p>`);
+    <p class="note">측정된 환경 정보만 표시합니다. 이 구간의 안전 여부는 평가하지 않습니다.</p>
+    ${reportBox(`${r.name} (${ROAD_LABEL[r.type]})`, r.id)}`);
   bindGallery();
 }
 
