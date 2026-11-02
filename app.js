@@ -15,7 +15,7 @@ const DAYS = ["sun","mon","tue","wed","thu","fri","sat"];
 const DAY_KO = { mon:"월", tue:"화", wed:"수", thu:"목", fri:"금", sat:"토", sun:"일" };
 const REPORT_TYPES = ["폐쇄됨","철거됨","공사중","운영시간 다름","정보가 다름","기타"];
 
-const state = { active:new Set(Object.keys(CATEGORIES)), openNow:false, showRoads:true, showLights:false };
+const state = { active:new Set(Object.keys(CATEGORIES)), openNow:false, showRoads:true, showLights:false, q:"" };
 // ‘지금 운영 중’ 필터를 거는 분류. AED·벤치·계단·쓰레기통 등은 필터를 켜도 그대로 보입니다.
 // 이 분류 칩이 하나도 켜져 있지 않으면 필터 자체를 숨김(조원 피드백: 전체 해제 상태에서 켜면 아무것도 안 떠서 어색함)
 const OPEN_FILTER_CATS = ["hospital", "pharmacy", "toilet"];
@@ -235,17 +235,48 @@ function pinIcon(place, open) {
 function render() {
   markerLayer.clearLayers();
   let shown = 0, hiddenUnknown = 0;
+  const q = searchKey(state.q);
   window.PLACES.forEach(p => {
-    if (!state.active.has(p.category)) return;
+    if (q ? !placeText(p).includes(q) : !state.active.has(p.category)) return;   // 검색 중에는 분류 칩과 상관없이 찾음
     const open = isOpenNow(p);
     if (state.openNow && OPEN_FILTER_CATS.includes(p.category) && open !== true) { if (open === null) hiddenUnknown++; return; }
     shown++;
     L.marker([p.lat, p.lng], { icon: pinIcon(p, open), title: p.name, keyboard:true })
       .on("click", () => openPlace(p)).addTo(markerLayer);
   });
-  document.getElementById("count").textContent =
+  document.getElementById("count").textContent = (q ? `‘${state.q.trim()}’ 검색 ` : "") +
     `${shown}곳 표시` + (hiddenUnknown ? ` · 운영시간 확인불가 ${hiddenUnknown}곳 제외` : "");
+  renderSearchResults();
 }
+
+// ── 검색 (조원 피드백: 병원 중 내과만 찾기 등) ─────────
+// 이름·위치 설명·현장 메모·분류 이름에서 찾음. 띄어쓰기·대소문자 무시. 검색 중에는 분류 칩을 무시하고 전체에서 찾음
+// (‘지금 운영 중’ 필터는 그대로 적용). 이름에 진료과가 없는 병원(○○의원)은 진료과로 안 찾아질 수 있음
+const searchKey = t => String(t || "").replace(/\s+/g, "").toLowerCase();
+const placeText = p => searchKey([p.name, CATEGORIES[p.category]?.label, p.details?.location, p.details?.note].join(" "));
+const qInput = document.getElementById("q"), qClear = document.getElementById("qClear"), qResults = document.getElementById("qResults");
+function renderSearchResults() {
+  const q = searchKey(state.q);
+  qClear.hidden = !state.q;
+  if (!q) { qResults.hidden = true; qResults.innerHTML = ""; return; }
+  const hits = window.PLACES.filter(p => placeText(p).includes(q));
+  qResults.hidden = false;
+  qResults.innerHTML = hits.length
+    ? hits.slice(0, 30).map(p => `<li><button type="button" data-id="${esc(p.id)}"><span class="dot" style="--c:${CATEGORIES[p.category].color}"></span>${esc(p.name)}<small>${esc(CATEGORIES[p.category].label)}</small></button></li>`).join("")
+      + (hits.length > 30 ? `<li class="more">외 ${hits.length - 30}곳 — 지도에 모두 표시됨</li>` : "")
+    : `<li class="more">찾는 곳이 없습니다. 병원은 이름에 진료과가 없으면 안 찾아질 수 있어요.</li>`;
+}
+let qTimer;
+qInput.addEventListener("input", () => { clearTimeout(qTimer); qTimer = setTimeout(() => { state.q = qInput.value; render(); }, 150); });
+qClear.onclick = () => { qInput.value = ""; state.q = ""; render(); qInput.focus(); };
+qResults.addEventListener("click", e => {
+  const b = e.target.closest("button[data-id]"); if (!b) return;
+  const p = window.PLACES.find(x => x.id === b.dataset.id); if (!p) return;
+  qResults.hidden = true;
+  map.setView([p.lat, p.lng], Math.max(map.getZoom(), 18)); openPlace(p);
+});
+qInput.addEventListener("focus", () => { if (searchKey(state.q)) qResults.hidden = false; });
+document.addEventListener("click", e => { if (!e.target.closest(".search")) qResults.hidden = true; });
 
 // ── 정보창 ───────────────────────────────────────
 const sheet = document.getElementById("sheet"), sheetBody = document.getElementById("sheetBody");

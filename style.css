@@ -34,6 +34,20 @@ h1{font-size:1.15rem;font-weight:800;margin:0;letter-spacing:-.01em}
 .about p{margin:4px 0}
 .vlegend{list-style:none;padding:0;margin:6px 0;display:grid;gap:4px}
 
+/* 검색 */
+.search{position:relative;margin:2px 0 6px}
+.search input{width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:8px 36px 8px 12px;border:1.5px solid var(--line);border-radius:8px;background:#fff;min-height:42px}
+.search input::-webkit-search-cancel-button{display:none}
+.q-clear{position:absolute;right:4px;top:4px;width:34px;height:34px;border:none;background:none;font-size:1rem;color:var(--sub);cursor:pointer}
+.q-clear[hidden],.q-results[hidden]{display:none}
+.top:has(.q-results:not([hidden])){position:relative;z-index:1500}   /* 결과 목록이 지도 버튼 위로 */
+.q-results{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:1200;list-style:none;margin:0;padding:4px;background:var(--paper);
+  border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(30,42,50,.18);max-height:45vh;overflow-y:auto}
+.q-results button{width:100%;display:flex;align-items:center;gap:8px;text-align:left;border:none;background:none;font:inherit;color:var(--ink);padding:9px 8px;border-radius:6px;cursor:pointer;min-height:40px}
+.q-results button:hover{background:var(--wash)}
+.q-results .dot{flex:none;width:10px;height:10px;border-radius:3px;background:var(--c)}
+.q-results small{margin-left:auto;color:var(--sub);font-size:.75rem;flex:none}
+.q-results .more{padding:8px;color:var(--sub);font-size:.82rem}
 .filters{display:flex;gap:6px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
 .chip{flex:none;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--paper);

@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=202611021447">
-<link rel="stylesheet" href="survey.css?v=202611021447">
+<link rel="stylesheet" href="style.css?v=202611021449">
+<link rel="stylesheet" href="survey.css?v=202611021449">
 </head>
 <body>
 <header class="top">
@@ -28,9 +28,14 @@
       <li><span class="vbadge unverified">확인불가</span> 최근 확인하지 못함</li>
     </ul>
     <p>보행 구간은 인도·차도·보차혼용 구분과 폭, 포장, 경사 같은 측정값만 보여줍니다. 어느 길이 더 안전한지는 판단하지 않습니다.</p>
-    <p>선 색: 초록 = 인도, 연한 붉은색 = 차가 다닐 수 있는 길(차도·보차혼용), 검은 테두리의 형광 노란색 = 측정한 유효 폭이 1.5m 미만인 좁은 길. 폭을 잰 구간은 지도를 크게 확대하면 선 위에 폭이 표시됩니다. 기준은 국토교통부 「보도 설치 및 관리 지침」(2018. 7. 26. 전면 개정)의 보행자 통행 유효 폭 최소 1.5m(휠체어·유모차가 교행할 수 있는 최소 폭)입니다.</p>
+    <p>선 색: 초록 = 인도, 연한 붉은색 = 차가 다닐 수 있는 길(차도·보차혼용), 검은 테두리의 형광 노란색 = 측정한 유효 폭이 1.5m 미만인 좁은 길. 폭을 잰 구간은 선을 누르면 폭이 표시됩니다. 기준은 국토교통부 「보도 설치 및 관리 지침」(2018. 7. 26. 전면 개정)의 보행자 통행 유효 폭 최소 1.5m(휠체어·유모차가 교행할 수 있는 최소 폭)입니다.</p>
   </div>
   <div id="filterBox">
+  <div class="search" role="search">
+    <input type="search" id="q" placeholder="이름·진료과 검색 (예: 내과, 치과, 정형외과)" aria-label="시설 이름 검색" autocomplete="off">
+    <button type="button" id="qClear" class="q-clear" aria-label="검색어 지우기" hidden>✕</button>
+    <ul id="qResults" class="q-results" hidden></ul>
+  </div>
   <nav class="filters" aria-label="분류 필터" id="filters"></nav>
   <div class="toggles">
     <label class="switch open-now"><input type="checkbox" id="openNow"><span id="openNowText">병원·약국·화장실은 지금 운영 중인 곳만</span></label>
@@ -66,14 +71,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js"></script>
-<script src="data/config.js?v=202611021447"></script>
-<script src="data/bounds.js?v=202611021447"></script>
-<script src="data/places.js?v=202611021447"></script>
-<script src="data/roads.js?v=202611021447"></script>
-<script src="data/streetlights.js?v=202611021447"></script>
-<script src="data/big-roads.js?v=202611021447"></script>
-<script src="data/streetlights-survey.js?v=202611021447"></script>
-<script src="app.js?v=202611021447"></script>
-<script src="survey.js?v=202611021447"></script>
+<script src="data/config.js?v=202611021449"></script>
+<script src="data/bounds.js?v=202611021449"></script>
+<script src="data/places.js?v=202611021449"></script>
+<script src="data/roads.js?v=202611021449"></script>
+<script src="data/streetlights.js?v=202611021449"></script>
+<script src="data/big-roads.js?v=202611021449"></script>
+<script src="data/streetlights-survey.js?v=202611021449"></script>
+<script src="app.js?v=202611021449"></script>
+<script src="survey.js?v=202611021449"></script>
 </body>
 </html>
