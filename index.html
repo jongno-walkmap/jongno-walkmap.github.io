@@ -7,8 +7,19 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=202611030141">
-<link rel="stylesheet" href="survey.css?v=202611030141">
+<link rel="stylesheet" href="style.css?v=202611031930">
+<link rel="stylesheet" href="survey.css?v=202611031930">
+<!-- 방문 통계(구글 애널리틱스 GA4, 2026-11-03). 공개 주소에서만 켜고 조사 모드(?survey=1)·내 PC(file://)에서는 안 셈 -->
+<script>
+(function () {
+  if (location.hostname !== "jongno-walkmap.github.io" || /[?&]survey=1/.test(location.search)) return;
+  var s = document.createElement("script"); s.async = true;
+  s.src = "https://www.googletagmanager.com/gtag/js?id=G-7FVBYBSHHN"; document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { dataLayer.push(arguments); };
+  gtag("js", new Date()); gtag("config", "G-7FVBYBSHHN");
+})();
+</script>
 </head>
 <body>
 <header class="top">
@@ -23,6 +34,7 @@
     <button type="button" id="principleHide" class="principle-x" aria-label="안내문 접기">접기 ▴</button></p>
   <div id="about" class="about" hidden>
     <p>모든 정보에는 확인 방법과 최종 확인 날짜가 붙어 있습니다.</p>
+    <p>방문 통계(방문 수·머문 시간·많이 쓴 기능)를 보기 위해 구글 애널리틱스를 사용합니다. 이름·연락처 같은 개인정보는 모으지 않습니다.</p>
     <ul class="vlegend">
       <li><span class="vbadge field">현장확인</span> 조사자가 직접 가서 확인</li>
       <li><span class="vbadge agency">기관확인</span> 공공기관 자료로 확인</li>
@@ -74,14 +86,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js"></script>
-<script src="data/config.js?v=202611030141"></script>
-<script src="data/bounds.js?v=202611030141"></script>
-<script src="data/places.js?v=202611030141"></script>
-<script src="data/roads.js?v=202611030141"></script>
-<script src="data/streetlights.js?v=202611030141"></script>
-<script src="data/big-roads.js?v=202611030141"></script>
-<script src="data/streetlights-survey.js?v=202611030141"></script>
-<script src="app.js?v=202611030141"></script>
-<script src="survey.js?v=202611030141"></script>
+<script src="data/config.js?v=202611031930"></script>
+<script src="data/bounds.js?v=202611031930"></script>
+<script src="data/places.js?v=202611031930"></script>
+<script src="data/roads.js?v=202611031930"></script>
+<script src="data/streetlights.js?v=202611031930"></script>
+<script src="data/big-roads.js?v=202611031930"></script>
+<script src="data/streetlights-survey.js?v=202611031930"></script>
+<script src="app.js?v=202611031930"></script>
+<script src="survey.js?v=202611031930"></script>
 </body>
 </html>

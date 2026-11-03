@@ -14,6 +14,8 @@ const VSTATUS = { field:"현장확인", agency:"기관확인", unverified:"확�
 const DAYS = ["sun","mon","tue","wed","thu","fri","sat"];
 const DAY_KO = { mon:"월", tue:"화", wed:"수", thu:"목", fri:"금", sat:"토", sun:"일" };
 const REPORT_TYPES = ["폐쇄됨","철거됨","공사중","운영시간 다름","정보가 다름","기타"];
+// 방문 통계(GA4)에 기능 사용을 남김. 공개 주소가 아니면 gtag 가 없어서 아무것도 안 함
+const track = (name, params) => { try { if (window.gtag) window.gtag("event", name, params || {}); } catch {} };
 
 const state = { active:new Set(Object.keys(CATEGORIES)), openNow:false, showRoads:true, showLights:false, q:"" };
 // ‘지금 운영 중’ 필터를 거는 분류. AED·벤치·계단·쓰레기통 등은 필터를 켜도 그대로 보입니다.
@@ -123,6 +125,7 @@ function reportBox(name, id) {
       <p class="note">보내 주신 제보는 조사팀이 확인한 뒤 지도에 반영합니다. 그 전까지 지도 정보는 바뀌지 않습니다.</p>
     </div>`;
 }
+document.addEventListener("click", e => { const a = e.target.closest(".report-go"); if (a) track("report_click", { pin: a.closest(".report-form")?.dataset.id || "" }); });
 // 종류를 고르면 버튼 주소에 그 종류도 채워 넣음
 document.addEventListener("change", e => {
   const box = e.target.closest(".report-form"); if (!box || e.target.name !== "rtype") return;
@@ -204,6 +207,7 @@ function setFilters(hidden, remember = true) {
 filterToggle.onclick = () => setFilters(!filterBox.hidden);
 try { if (localStorage.getItem(FILTER_KEY) === "1") setFilters(true, false); } catch {}
 document.getElementById("feedbackBtn").href = feedbackUrl({ kind: FEEDBACK_FORM.KIND_OPINION });
+document.getElementById("feedbackBtn").addEventListener("click", () => track("feedback_click"));
 aboutBtn.onclick = () => { about.hidden = !about.hidden; aboutBtn.setAttribute("aria-expanded", !about.hidden); };
 
 // ── 보행 구간 ────────────────────────────────────
@@ -300,7 +304,9 @@ function renderSearchResults() {
     : `<li class="more">찾는 곳이 없습니다. 병원은 이름에 진료과가 없으면 안 찾아질 수 있어요.</li>`;
 }
 let qTimer;
-qInput.addEventListener("input", () => { clearTimeout(qTimer); qTimer = setTimeout(() => { state.q = qInput.value; render(); }, 150); });
+let qTrackTimer;
+qInput.addEventListener("input", () => { clearTimeout(qTimer); qTimer = setTimeout(() => { state.q = qInput.value; render(); }, 150);
+  clearTimeout(qTrackTimer); qTrackTimer = setTimeout(() => { if (qInput.value.trim()) track("search", { search_term: qInput.value.trim().slice(0, 40) }); }, 1500); });
 qClear.onclick = () => { qInput.value = ""; state.q = ""; render(); qInput.focus(); };
 qResults.addEventListener("click", e => {
   const b = e.target.closest("button[data-id]"); if (!b) return;
@@ -360,6 +366,7 @@ function detailRows(p) {
 }
 
 function openPlace(p) {
+  track("place_open", { category: p.category });
   const c = CATEGORIES[p.category], open = isOpenNow(p);
   const statusHtml = open === true ? `<span class="status open">지금 운영 중</span>`
     : open === false ? `<span class="status shut">지금 운영 안 함</span>`
@@ -389,6 +396,7 @@ function bindGallery() {
 }
 
 function openRoad(r) {
+  track("road_open", { narrow: lineKind(r) === "narrow" ? "yes" : "no" });
   showSheet(`
     <div class="cat" style="--c:${LINE_STYLE[lineKind(r)].color}">보행 구간 · ${ROAD_LABEL[r.type]}${lineKind(r) === "narrow" ? " · 좁은 길" : ""}</div>
     <h2 id="sheetTitle">${esc(r.name)}</h2>
@@ -500,6 +508,7 @@ function syncLightPoints() {
   show ? lightPointLayer.addTo(map) : lightPointLayer.remove();
 }
 function toggleLights() {
+  if (state.showLights) track("lights_on");
   document.body.classList.toggle("night", state.showLights);
   if (state.showLights) { gridLayer.addTo(map); document.getElementById("gridLegend").hidden = false; }
   else { gridLayer.remove(); document.getElementById("gridLegend").hidden = true; closeSheet(); }
